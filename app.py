@@ -267,7 +267,7 @@ def daily_to_cumulative_by_doy(daily: pd.Series, ytd_only: bool) -> pd.DataFrame
 # =========================================================
 
 st.set_page_config(page_title="iNat Pace Dashboard", layout="wide")
-st.title("iNaturalist Pace Dashboard (learning build)")
+st.title("iNaturalist Pace Dashboard")
 
 # Sidebar controls: user input + debug toggle
 with st.expander("Inputs", expanded=True):
