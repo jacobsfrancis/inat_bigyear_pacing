@@ -277,7 +277,7 @@ with st.expander("Inputs", expanded=True):
     )
 
     friends_raw = st.text_input(
-        "friend usernames (comma-separated)",
+        "friend(s) usernames (comma-separated)",
         value="friend1_username,friend2_username"
     )
 
