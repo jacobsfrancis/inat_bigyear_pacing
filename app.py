@@ -4,16 +4,16 @@ iNat Pace Dashboard (CS101 edition)
 What this app does:
 1) You type:
    - YOUR iNaturalist username (login)
-   - one or more "opponent" usernames
+   - one or more "friend" usernames
 
 2) The app pulls data from the iNaturalist API:
    - Your daily observation counts for THIS YEAR (YTD)
-   - For each opponent: their observation counts by year, picks their best year,
+   - For each friend: their observation counts by year, picks their best year,
      then pulls daily counts for that best year
 
 3) It converts daily counts -> cumulative totals across day-of-year (DOY)
-4) It plots: your current-year cumulative curve vs each opponent's best-year curve
-5) It prints a small table: "how far ahead/behind" you are today vs each opponent
+4) It plots: your current-year cumulative curve vs each friend's best-year curve
+5) It prints a small table: "how far ahead/behind" you are today vs each friend
 
 Important concept:
 - The API endpoint we use is /v1/observations/histogram
@@ -275,8 +275,8 @@ with st.sidebar:
 
     # Anonymized defaults: no personal usernames here
     me_user = st.text_input("Your iNat username (login)", value="your_username_here")
-    opponents_raw = st.text_input(
-        "Opponent usernames (comma-separated)",
+    friends_raw = st.text_input(
+        "friend usernames (comma-separated)",
         value="friend1_username,friend2_username"
     )
 
@@ -285,8 +285,8 @@ with st.sidebar:
 
     st.caption("This version plots observation pacing only (no family diversity yet).")
 
-# Parse opponent list from comma-separated string
-opponents = [x.strip() for x in opponents_raw.split(",") if x.strip()]
+# Parse friend list from comma-separated string
+friends = [x.strip() for x in friends_raw.split(",") if x.strip()]
 
 # Main "Run" button
 if st.button("Run"):
@@ -330,17 +330,17 @@ if st.button("Run"):
         me_today = int(me_curve["cumulative"].iloc[-1])
 
         # -----------------------------------------
-        # For each opponent:
+        # For each friend:
         # 1) find their best year
         # 2) fetch daily counts for that year
         # 3) plot their best-year curve
         # 4) compute snapshot difference at today_doy
         # -----------------------------------------
-        for opp in opponents:
+        for opp in friends:
             # 1) Per-year totals
             year_counts = histogram_year_counts(opp, debug=debug)
             if not year_counts:
-                st.warning(f"No yearly histogram data returned for opponent '{opp}'. Skipping.")
+                st.warning(f"No yearly histogram data returned for friend '{opp}'. Skipping.")
                 continue
 
             # Optionally ignore current year if you only want *completed* years:
@@ -355,10 +355,10 @@ if st.button("Run"):
             opp_curve = daily_to_cumulative_by_doy(opp_daily, ytd_only=False)
 
             if len(opp_curve) == 0:
-                st.warning(f"No daily data returned for opponent '{opp}' in best year {best_year}. Skipping plot.")
+                st.warning(f"No daily data returned for friend '{opp}' in best year {best_year}. Skipping plot.")
                 continue
 
-            # Plot opponent curve as a solid line
+            # Plot friend curve as a solid line
             ax.plot(
                 opp_curve["doy"],
                 opp_curve["cumulative"],
@@ -366,7 +366,7 @@ if st.button("Run"):
                 label=f"{opp} best year {best_year} ({best_total})"
             )
 
-            # 4) Snapshot: opponent cumulative at today's DOY
+            # 4) Snapshot: friend cumulative at today's DOY
             # We do this safely (no .iloc[0] unless we confirmed it exists).
             match = opp_curve.loc[opp_curve["doy"] == today_doy, "cumulative"]
             if len(match) > 0:
@@ -378,17 +378,17 @@ if st.button("Run"):
 
             # Add a row to the summary table
             rows.append({
-                "Opponent": opp,
-                "Opponent best year": best_year,
+                "friend": opp,
+                "friend best year": best_year,
                 "Your obs (YTD)": me_today,
-                "Opponent obs by same DOY": opp_today,
+                "friend obs by same DOY": opp_today,
                 "Difference (you - them)": me_today - opp_today,
             })
 
         # Label the plot nicely
         ax.set_xlabel("Day of year")
         ax.set_ylabel("Cumulative observations")
-        ax.set_title("Pace: your current year vs opponents' best years")
+        ax.set_title("Pace: your current year vs friends' best years")
         ax.legend()
 
         # Show plot in Streamlit
@@ -399,7 +399,7 @@ if st.button("Run"):
         if rows:
             st.dataframe(pd.DataFrame(rows))
         else:
-            st.write("No opponent curves plotted (see warnings above).")
+            st.write("No friend curves plotted (see warnings above).")
 
     except Exception as e:
         # Catch any exception and show it in the UI
