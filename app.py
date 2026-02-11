@@ -389,7 +389,7 @@ if st.button("Run"):
         # Label the plot nicely
         ax.set_xlabel("Day of year")
         ax.set_ylabel("Cumulative observations")
-        ax.set_title("Pace: your current year vs opponents' best years")
+        ax.set_title("Pace: your current year vs friends' best years")
         ax.legend()
 
         # Show plot in Streamlit
