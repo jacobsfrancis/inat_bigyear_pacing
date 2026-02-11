@@ -269,25 +269,22 @@ def daily_to_cumulative_by_doy(daily: pd.Series, ytd_only: bool) -> pd.DataFrame
 st.set_page_config(page_title="iNat Pace Dashboard", layout="wide")
 st.title("iNaturalist Pace Dashboard (learning build)")
 
-# ---- Inputs moved to main page (better for embed mode) ----
+# Sidebar controls: user input + debug toggle
+with st.sidebar:
+    st.header("Inputs")
 
-with st.expander("Inputs", expanded=True):
-    me_user = st.text_input(
-        "Your iNat username (login)",
-        value="your_username_here"
-    )
-
-    opponents_raw = st.text_input(
-        "Opponent usernames (comma-separated)",
+    # Anonymized defaults: no personal usernames here
+    me_user = st.text_input("Your iNat username (login)", value="your_username_here")
+    friends_raw = st.text_input(
+        "friend usernames (comma-separated)",
         value="friend1_username,friend2_username"
     )
 
+    # If checked, the app prints URL + raw JSON for every API call
     debug = st.checkbox("Debug API responses")
 
     st.caption("This version plots observation pacing only (no family diversity yet).")
 
-# Parse opponent list
-opponents = [x.strip() for x in opponents_raw.split(",") if x.strip()]
 # Parse friend list from comma-separated string
 friends = [x.strip() for x in friends_raw.split(",") if x.strip()]
 
@@ -391,7 +388,7 @@ if st.button("Run"):
         # Label the plot nicely
         ax.set_xlabel("Day of year")
         ax.set_ylabel("Cumulative observations")
-        ax.set_title("Pace: your current year vs friends' best years")
+        ax.set_title("Pace: your current year vs opponents' best years")
         ax.legend()
 
         # Show plot in Streamlit
