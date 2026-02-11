@@ -272,7 +272,7 @@ st.title("iNaturalist Pace Dashboard")
 # Sidebar controls: user input + debug toggle
 with st.expander("Inputs", expanded=True):
     me_user = st.text_input(
-        "Your iNat username (login)",
+        "Your iNat username",
         value="your_username_here"
     )
 
