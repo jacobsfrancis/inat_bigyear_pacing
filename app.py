@@ -270,11 +270,12 @@ st.set_page_config(page_title="iNat Pace Dashboard", layout="wide")
 st.title("iNaturalist Pace Dashboard (learning build)")
 
 # Sidebar controls: user input + debug toggle
-with st.sidebar:
-    st.header("Inputs")
+with st.expander("Inputs", expanded=True):
+    me_user = st.text_input(
+        "Your iNat username (login)",
+        value="your_username_here"
+    )
 
-    # Anonymized defaults: no personal usernames here
-    me_user = st.text_input("Your iNat username (login)", value="your_username_here")
     friends_raw = st.text_input(
         "friend usernames (comma-separated)",
         value="friend1_username,friend2_username"
